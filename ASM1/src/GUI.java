@@ -13,6 +13,7 @@ public class GUI {
     JFileChooser fileChooser;
     GridBagLayout gridBagLayout;
     GridBagConstraints gridBagConstraints;
+    WavDecoder wavDecoder;
 
     public GUI(){
         mainFrame = new JFrame("GUI Screen");
@@ -26,36 +27,30 @@ public class GUI {
         wavButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fileChooser = new JFileChooser();
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); // start at home directory
+                enterFrame = new JFrame("new Frame");
+                enterFrame.setSize(400, 400);
+                enterFrame.add(new WavDecoder(enterFrame));
+                enterFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                enterFrame.setVisible(true);
+            }
+        });
 
-                // Show the file chooser dialog
-                int result = fileChooser.showOpenDialog(mainFrame);
-
-                // If the user selects a file
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    // You can do something with the file here
-                    JOptionPane.showMessageDialog(mainFrame, "Selected file: " + selectedFile.getAbsolutePath());
-                }
+        tiffButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enterFrame = new JFrame("new Frame");
+                enterFrame.setSize(400, 400);
+                TiffDecoder tiffDecoder = new TiffDecoder(enterFrame);
+                enterFrame.add(tiffDecoder.getjLabel());
+                enterFrame.pack();
+                enterFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                enterFrame.setVisible(true);
             }
         });
 
         tiffButton.setPreferredSize(new Dimension(170, 150));
         jPanel.add(wavButton);
         jPanel.add(tiffButton);
-//        gridBagLayout = new GridBagLayout();
-//        gridBagConstraints = new GridBagConstraints();
-//        jFrame.setLayout(gridBagLayout);
-//        gridBagConstraints.fill = GridBagConstraints.PAGE_START;
-//        gridBagConstraints.gridx = 0;
-//        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.ipadx = 80;
-//        jFrame.add(wavButton, gridBagConstraints);
-//        gridBagConstraints.gridx = 1;
-//        gridBagConstraints.gridy = 0;
-//        gridBagConstraints.ipadx = 80;
-//        jFrame.add(tiffButton, gridBagConstraints);
 
         jPanel.setVisible(true);
         mainFrame.add(jPanel);
