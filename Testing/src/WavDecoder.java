@@ -2,6 +2,8 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 
@@ -11,27 +13,26 @@ public class WavDecoder extends JPanel{
     AudioFileFormat wavFileFormat;
     File selectedFile;
     int[][] samples;
-    boolean aBoolean = true;
+    boolean aBoolean;
     public WavDecoder(JFrame frame){
         fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); // start at home directory
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("WAV files", "wav"));
 
-        // Show the file chooser dialog
         int result = fileChooser.showOpenDialog(frame);
 
-        // If the user selects a file
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
 
             AudioInputStream audioInputStream = null;
             
             try{
+                aBoolean = true;
                 audioInputStream = AudioSystem.getAudioInputStream(selectedFile);
                 int frameLength = (int) audioInputStream.getFrameLength();
                 int frameSize = (int) audioInputStream.getFormat().getFrameSize();
                 byte[] byteArray = new byte[frameLength*frameSize];
 
-                System.out.println("frameLength: "+frameLength+" frameSize: "+frameSize);
 
                 audioInputStream.read(byteArray);
 
@@ -45,8 +46,7 @@ public class WavDecoder extends JPanel{
                         i++;
                         int high = (int) byteArray[i];
                         i++;
-                        int sample = getSixteenBitSample(high, low);
-                        //System.out.println("high: "+high+" low: "+low+ " sample: "+sample + "channel number: "+j);
+                        int sample = combineHighLowSample(high, low);
                         samples[j][sampleIndex] = sample;
                     }
                     sampleIndex++;
@@ -62,31 +62,24 @@ public class WavDecoder extends JPanel{
                 }
             }
         }
-        else {
-            aBoolean = false;
-            frame.dispose();
-
-        }
     }
 
-    protected int getSixteenBitSample(int high, int low) {
+    protected int combineHighLowSample(int high, int low) {
         return (high << 8) + (low & 0x00ff);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         if (aBoolean) {
-            // Assuming two channels for simplicity. You can generalize this for more channels.
-            Color[] colors = {Color.RED, Color.BLUE}; // Colors for each channel
+            Color[] colors = {Color.RED, Color.BLUE};
             int channels = samples.length;
             int heightPerChannel = (getHeight()-25)/ channels;
             double scale = 1.5;
             double highestPossiblePoint = 32768.0;
 
             for (int channel = 0; channel < channels; channel++) {
-                g.setColor(colors[channel]); // Set the color for the current channel
+                g.setColor(colors[channel]);
 
                 for (int i = 1; i < samples[channel].length; i++) {
                     int x1 = (int) ((i - 1) * getWidth() * scale / (samples[channel].length - 1));
@@ -94,10 +87,12 @@ public class WavDecoder extends JPanel{
                     int x2 = (int) (i * getWidth() * scale / (samples[channel].length - 1));
                     int y2 = (int) ((1 - (samples[channel][i] / highestPossiblePoint)) * scale * heightPerChannel / 2 + (heightPerChannel * channel));
 
-                    g.drawLine(x1, y1, x2, y2); // Draw the line for the current sample
+                    g.drawLine(x1, y1, x2, y2);
                 }
             }
         }
     }
+
+    public void changeBool(){aBoolean = false;}
 
 }
