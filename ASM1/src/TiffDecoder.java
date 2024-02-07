@@ -1,23 +1,22 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class TiffDecoder {
-    JFileChooser fileChooser;
-    File selectedFile;
-    BufferedImage bufferedImage;
-    JLabel jLabel;
-    Boolean aBoolean = true;
+    private JFileChooser fileChooser;
+    private File selectedFile;
+    private BufferedImage bufferedImage;
+    private JLabel jLabel;
+    public Boolean aBoolean = true;
     public TiffDecoder(JFrame frame){
         fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home"))); // start at home directory
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setFileFilter(new FileNameExtensionFilter("TIFF files", "tif"));
 
         int result = fileChooser.showOpenDialog(frame);
 
-        // If the user selects a file
         if (result == JFileChooser.APPROVE_OPTION) {
             selectedFile = fileChooser.getSelectedFile();
             try{

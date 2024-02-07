@@ -1,19 +1,16 @@
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
 public class test {
     private JPanel homePanel, centerPanel, topPanel, bottomPanel;
     private JButton EXITButton, OPENFILEButton, WAVButton,TIFFButton, SWITCHButton;
     private JLabel textbox;
     private JFrame mainFrame;
-    WavDecoder wavDecoder;
-    TiffDecoder tiffDecoder;
-    int trueOrFalse;
-    int counter = 0;
+    private WavDecoder wavDecoder;
+    private TiffDecoder tiffDecoder;
+    private int trueOrFalse;
     public test(){
         mainFrame = new JFrame("CMPT 365 Assignment 1");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -45,7 +42,6 @@ public class test {
                     }
                     if (trueOrFalse == 0) {
                         wavDecoder = new WavDecoder(mainFrame);
-                        counter++;
                         if (wavDecoder.aBoolean) {
                             centerPanel.setVisible(false);
                             homePanel.add(wavDecoder, BorderLayout.CENTER);
